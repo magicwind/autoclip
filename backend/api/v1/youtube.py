@@ -361,6 +361,7 @@ async def process_youtube_download_task(task_id: str, request: YouTubeDownloadRe
             
             try:
                 from ...utils.speech_recognizer import generate_subtitle_for_video, SpeechRecognitionError
+                from pathlib import Path
                 video_file_path = Path(video_path)
                 
                 # 根据视频信息选择合适的模型
@@ -398,7 +399,7 @@ async def process_youtube_download_task(task_id: str, request: YouTubeDownloadRe
                     logger.error(f"备用字幕获取也失败: {backup_error}")
                     subtitle_path = None  # 确保字幕路径为空，后续会标记项目失败
             except Exception as e:
-                logger.error(f"生成字幕过程中发生未知错误: {e}")
+                logger.exception(f"生成字幕过程中发生未知错误: {e}")
                 subtitle_path = None  # 确保字幕路径为空，后续会标记项目失败
         
         logger.info(f"下载完成 - 视频文件: {video_path}, 字幕文件: {subtitle_path}")

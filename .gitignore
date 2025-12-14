@@ -93,3 +93,13 @@ dump.rdb
 # 临时文件
 *.tmp
 *.temp
+
+node_modules/
+dist/
+build/
+*.map
+*.d.ts
+*.tsbuildinfo
+.bin/
+
+data/

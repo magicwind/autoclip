@@ -172,7 +172,7 @@ class LLMManager:
             provider = LLMProviderFactory.create_provider(provider_type, api_key, model_name)
             return provider.test_connection()
         except Exception as e:
-            logger.error(f"测试{provider_type.value}连接失败: {e}")
+            logger.exception(f"{provider_type.value}连接测试失败: {e}")
             return False
     
     def get_current_provider_info(self) -> Dict[str, Any]:

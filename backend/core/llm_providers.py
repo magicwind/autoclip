@@ -96,6 +96,7 @@ class DashScopeProvider(LLMProvider):
     def __init__(self, api_key: str, model_name: str = "qwen-plus", **kwargs):
         super().__init__(api_key, model_name, **kwargs)
         try:
+            logger.info(f"正在初始化DashScope客户端...{api_key=}, {model_name=}")
             from dashscope import Generation
             self.generation = Generation
         except ImportError:

@@ -220,6 +220,7 @@ async def get_projects(
         
         return project_service.get_projects_paginated(pagination, filters)
     except Exception as e:
+        logger.exception("Error fetching projects")
         raise HTTPException(status_code=400, detail=str(e))
 
 
@@ -485,36 +486,36 @@ async def retry_processing(
         project = project_service.get(project_id)
         if not project:
             raise HTTPException(status_code=404, detail="Project not found")
-        
+
         # 检查项目状态 - 允许失败、完成、处理中和等待中状态重试
         if project.status.value not in ["failed", "completed", "processing", "pending"]:
             raise HTTPException(status_code=400, detail="Project is not in failed, completed, processing, or pending status")
-        
+
         # 重置项目状态
         project_service.update_project_status(project_id, "pending")
-        
+
         # 发送WebSocket通知 - 已禁用WebSocket通知
         # await websocket_service.send_processing_started(
         #     project_id=int(project_id),
         #     message="重新开始处理流程"
         # )
-        
+
         # 获取文件路径并重新提交任务
         from ...core.path_utils import get_project_raw_directory
         raw_dir = get_project_raw_directory(project_id)
         video_path = raw_dir / "input.mp4"  # 使用标准的input.mp4文件名
         srt_path = raw_dir / "input.srt"    # 使用标准的input.srt文件名
-        
+
         # 检查视频文件是否存在，如果不存在则尝试重新下载
         if not video_path.exists():
             logger.warning(f"视频文件不存在: {video_path}，尝试重新下载")
-            
+
             # 检查项目元数据中是否有源URL
             if hasattr(project, 'project_metadata') and project.project_metadata:
                 source_url = project.project_metadata.get('source_url')
                 if source_url:
                     logger.info(f"发现源URL: {source_url}，开始重新下载")
-                    
+
                     # 根据URL类型选择下载方式
                     if 'bilibili.com' in source_url:
                         # B站视频重新下载

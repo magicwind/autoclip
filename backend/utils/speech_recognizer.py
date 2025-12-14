@@ -145,7 +145,7 @@ class LanguageCode(str, Enum):
 @dataclass
 class SpeechRecognitionConfig:
     """语音识别配置"""
-    method: SpeechRecognitionMethod = SpeechRecognitionMethod.BCUT_ASR
+    method: SpeechRecognitionMethod = SpeechRecognitionMethod.WHISPER_LOCAL
     language: LanguageCode = LanguageCode.AUTO
     model: str = "base"  # Whisper模型大小
     timeout: int = 0  # 超时时间（秒），0表示无限制

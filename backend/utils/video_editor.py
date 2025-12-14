@@ -170,6 +170,7 @@ class VideoEditor:
             
             cmd = [
                 'ffmpeg',
+                '-hwaccel videotoolbox',
                 '-ss', str(start_time),
                 '-i', str(video_path),
                 '-t', str(duration),
@@ -236,6 +237,7 @@ class VideoEditor:
                 # 拼接所有片段
                 cmd = [
                     'ffmpeg',
+                    '-hwaccel videotoolbox',
                     '-f', 'concat',
                     '-safe', '0',
                     '-i', str(file_list_path),

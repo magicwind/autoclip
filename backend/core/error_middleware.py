@@ -68,16 +68,69 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
     """全局异常处理器"""
     request_id = getattr(request.state, 'request_id', None)
     
-    # 记录异常详情
+    # 获取请求体（如果可能）
+    request_body = None
+    try:
+        if hasattr(request, '_body'):
+            request_body = request._body.decode('utf-8') if request._body else None
+        elif hasattr(request, 'body'):
+            # 尝试读取请求体，但要小心不要消费流
+            try:
+                request_body = await request.body()
+                request_body = request_body.decode('utf-8') if request_body else None
+            except:
+                request_body = "Unable to read request body"
+    except Exception as body_exc:
+        request_body = f"Error reading request body: {str(body_exc)}"
+    
+    # 获取查询参数
+    query_params = dict(request.query_params) if request.query_params else {}
+    
+    # 获取路径参数
+    path_params = dict(request.path_params) if hasattr(request, 'path_params') and request.path_params else {}
+    
+    # 获取请求头（过滤敏感信息）
+    headers = {}
+    for key, value in request.headers.items():
+        if key.lower() not in ['authorization', 'cookie', 'x-api-key']:
+            headers[key] = value
+    
+    # 完整的错误信息
+    error_details = {
+        "exception_type": type(exc).__name__,
+        "exception_message": str(exc),
+        "request_id": request_id,
+        "path": str(request.url.path),
+        "method": request.method,
+        "query_params": query_params,
+        "path_params": path_params,
+        "headers": headers,
+        "request_body": request_body,
+        "full_traceback": traceback.format_exc()
+    }
+    
+    # 记录详细的异常信息
     logger.error(
-        f"未处理的异常: {type(exc).__name__}: {str(exc)}",
-        extra={
-            "request_id": request_id,
-            "path": request.url.path,
-            "method": request.method,
-            "traceback": traceback.format_exc()
-        }
+        f"API Error - {type(exc).__name__}: {str(exc)}",
+        extra=error_details
     )
+    
+    # 同时打印到控制台以便调试
+    print(f"\n{'='*80}")
+    print(f"API ERROR DETAILS:")
+    print(f"{'='*80}")
+    print(f"Exception Type: {type(exc).__name__}")
+    print(f"Exception Message: {str(exc)}")
+    print(f"Request ID: {request_id}")
+    print(f"Path: {request.url.path}")
+    print(f"Method: {request.method}")
+    print(f"Query Params: {query_params}")
+    print(f"Path Params: {path_params}")
+    print(f"Request Body: {request_body}")
+    print(f"Headers: {headers}")
+    print(f"\nFull Stack Trace:")
+    print(traceback.format_exc())
+    print(f"{'='*80}\n")
     
     # 根据异常类型返回不同的错误响应
     if isinstance(exc, AutoClipsException):

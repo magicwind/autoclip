@@ -156,6 +156,7 @@ class VideoProcessor:
             # 使用 -ss 在输入前进行精确定位，使用 -t 指定持续时间
             cmd = [
                 'ffmpeg',
+                '-hwaccel videotoolbox',
                 '-ss', ffmpeg_start_time,  # 在输入前定位，更精确
                 '-i', str(input_video),
                 '-t', str(duration),  # 使用持续时间而不是绝对结束时间
@@ -232,6 +233,7 @@ class VideoProcessor:
             # 构建FFmpeg命令 - 使用H.264编码确保兼容性
             cmd = [
                 'ffmpeg',
+                '-hwaccel videotoolbox',
                 '-f', 'concat',
                 '-safe', '0',
                 '-i', str(concat_file),
@@ -285,6 +287,7 @@ class VideoProcessor:
             # 构建FFmpeg命令
             cmd = [
                 'ffmpeg',
+                '-hwaccel videotoolbox',
                 '-i', str(video_path),
                 '-ss', str(time_offset),
                 '-vframes', '1',
