@@ -1,6 +1,6 @@
 import React from 'react'
-import { Card, Button, Tooltip, message } from 'antd'
-import { PlayCircleOutlined, EditOutlined, DownloadOutlined } from '@ant-design/icons'
+import { Card, Button, Tooltip } from 'antd'
+import { PlayCircleOutlined, DownloadOutlined } from '@ant-design/icons'
 import { Collection, Clip } from '../store/useProjectStore'
 import EditableCollectionTitle from './EditableCollectionTitle'
 import './CollectionCard.css'
@@ -46,8 +46,8 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
         width: '320px',
         height: '380px',
         borderRadius: '16px',
-        border: '1px solid #303030',
-        background: 'linear-gradient(135deg, #1f1f1f 0%, #2a2a2a 100%)',
+        border: '1px solid var(--border-primary)',
+        background: 'var(--bg-secondary)',
         overflow: 'hidden',
         cursor: 'pointer',
         flexShrink: 0
@@ -190,7 +190,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
                 fontSize: '16px',
                 fontWeight: 600,
                 lineHeight: '1.4',
-                color: '#ffffff',
+                color: 'var(--text-primary)',
                 width: '100%',
                 display: '-webkit-box',
                 WebkitLineClamp: 2,
@@ -222,7 +222,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
                   WebkitBoxOrient: 'vertical',
                   overflow: 'hidden',
                   lineHeight: '1.5',
-                  color: '#b0b0b0',
+                  color: 'var(--text-secondary)',
                   cursor: 'pointer',
                   wordBreak: 'break-word',
                   textOverflow: 'ellipsis',
@@ -279,23 +279,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
               下载
             </Button>
           )}
-          <Button 
-            type="text" 
-            size="small"
-            icon={<EditOutlined />}
-            onClick={() => message.info('开发中，敬请期待', 3)}
-            style={{
-              color: '#ff7875',
-              border: '1px solid rgba(255, 120, 117, 0.3)',
-              borderRadius: '6px',
-              fontSize: '12px',
-              height: '28px',
-              padding: '0 12px',
-              background: 'rgba(255, 120, 117, 0.1)'
-            }}
-          >
-            投稿
-          </Button>
+
         </div>
       </div>
     </Card>

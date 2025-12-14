@@ -661,7 +661,9 @@ body {
 
 /* 现代化卡片效果 */
 .clip-card,
-.clip-card.ant-card {
+.clip-card.ant-card,
+.collection-card,
+.collection-card.ant-card {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   background: var(--bg-secondary) !important;
@@ -670,16 +672,25 @@ body {
 }
 
 .clip-card:hover,
-.clip-card.ant-card:hover {
+.clip-card.ant-card:hover,
+.collection-card:hover,
+.collection-card.ant-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 32px var(--shadow-medium) !important;
   border-color: var(--border-secondary) !important;
 }
 
 .clip-card .ant-card-body,
-.clip-card.ant-card .ant-card-body {
+.clip-card.ant-card .ant-card-body,
+.collection-card .ant-card-body,
+.collection-card.ant-card .ant-card-body {
   background: var(--bg-secondary) !important;
   color: var(--text-primary) !important;
+}
+
+.collection-card:hover .ant-card-body,
+.collection-card.ant-card:hover .ant-card-body {
+  background: var(--bg-hover) !important;
 }
 
 /* 状态标签样式 */
@@ -714,6 +725,75 @@ body {
 
 .loading-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* CollectionPreviewModal 主题适配 */
+.collection-preview-modal .playlist-header .ant-typography {
+  color: var(--text-primary) !important;
+}
+
+.collection-preview-modal .playlist-header .ant-typography-caption {
+  color: var(--text-tertiary) !important;
+}
+
+.collection-preview-modal .clip-item {
+  background: var(--bg-tertiary) !important;
+  border-color: transparent !important;
+}
+
+.collection-preview-modal .clip-item:hover {
+  background: var(--bg-hover) !important;
+  border-color: rgba(79, 172, 254, 0.3) !important;
+}
+
+.collection-preview-modal .clip-item.active {
+  background: rgba(79, 172, 254, 0.2) !important;
+  border-color: var(--accent-primary) !important;
+}
+
+.collection-preview-modal .clip-item.active::before {
+  background: var(--accent-primary) !important;
+}
+
+.collection-preview-modal .clip-title {
+  color: var(--text-primary) !important;
+}
+
+.collection-preview-modal .clip-meta {
+  color: var(--text-tertiary) !important;
+}
+
+.collection-preview-modal .clip-reason {
+  color: var(--text-disabled) !important;
+}
+
+.collection-preview-modal .clip-drag-handle {
+  color: var(--text-disabled) !important;
+}
+
+.collection-preview-modal .clip-drag-handle:hover {
+  color: var(--text-tertiary) !important;
+  background: var(--bg-tertiary) !important;
+}
+
+.collection-preview-modal .clip-drag-handle:active {
+  color: var(--text-secondary) !important;
+}
+
+.collection-preview-modal .clip-actions .ant-btn {
+  color: var(--error) !important;
+}
+
+.collection-preview-modal .clips-list::-webkit-scrollbar-track {
+  background: var(--bg-secondary) !important;
+}
+
+.collection-preview-modal .clips-list::-webkit-scrollbar-thumb {
+  background: var(--bg-hover) !important;
+}
+
+.collection-preview-modal .clips-list::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover) !important;
 }
 
 /* 强制所有卡片遵循主题 */

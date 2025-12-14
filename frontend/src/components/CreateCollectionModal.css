@@ -1,9 +1,9 @@
 /* 创建合集弹窗样式 */
 .create-collection-modal .ant-modal-content {
-  background: #1a1a1a !important;
-  border: 1px solid #2d2d2d !important;
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 16px !important;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5) !important;
+  box-shadow: 0 20px 60px var(--shadow-heavy) !important;
   overflow: hidden !important;
 }
 
@@ -13,27 +13,27 @@
 
 .create-collection-modal .ant-modal-body {
   padding: 0 !important;
-  background: #1a1a1a !important;
+  background: var(--bg-secondary) !important;
 }
 
 .create-collection-modal .ant-modal-close {
-  color: #999999 !important;
+  color: var(--text-tertiary) !important;
   top: 16px !important;
   right: 16px !important;
   z-index: 10 !important;
 }
 
 .create-collection-modal .ant-modal-close:hover {
-  color: #ffffff !important;
-  background: rgba(255, 255, 255, 0.1) !important;
+  color: var(--text-primary) !important;
+  background: var(--bg-tertiary) !important;
   border-radius: 8px !important;
 }
 
 /* 弹窗内容 */
 .modal-content {
   padding: 32px;
-  background: #1a1a1a;
-  color: #ffffff;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 /* 头部样式 */
@@ -47,7 +47,7 @@
 .header-icon {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: var(--accent-primary);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -62,20 +62,20 @@
 }
 
 .modal-title {
-  color: #ffffff !important;
+  color: var(--text-primary) !important;
   margin: 0 !important;
   font-size: 24px !important;
   font-weight: 600 !important;
 }
 
 .modal-subtitle {
-  color: #999999 !important;
+  color: var(--text-tertiary) !important;
   font-size: 14px;
   margin-top: 4px;
 }
 
 .header-divider {
-  border-color: #2d2d2d !important;
+  border-color: var(--border-primary) !important;
   margin: 0 0 32px 0 !important;
 }
 
@@ -101,64 +101,64 @@
 }
 
 .label-icon {
-  color: #4facfe;
+  color: var(--accent-primary);
   font-size: 16px;
 }
 
 .required-mark {
-  color: #ff4d4f;
+  color: var(--error);
   margin-left: 4px;
 }
 
 /* 表单控件样式 */
 .form-input {
-  background: #262626 !important;
-  border: 1px solid #404040 !important;
+  background: var(--bg-tertiary) !important;
+  border: 1px solid var(--border-secondary) !important;
   border-radius: 8px !important;
-  color: #ffffff !important;
+  color: var(--text-primary) !important;
   transition: all 0.3s ease !important;
 }
 
 .form-input:hover {
-  border-color: #4facfe !important;
+  border-color: var(--accent-primary) !important;
 }
 
 .form-input:focus {
-  border-color: #4facfe !important;
+  border-color: var(--accent-primary) !important;
   box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.2) !important;
 }
 
 .form-input::placeholder {
-  color: #666666 !important;
+  color: var(--text-disabled) !important;
 }
 
 .form-textarea {
-  background: #262626 !important;
-  border: 1px solid #404040 !important;
+  background: var(--bg-tertiary) !important;
+  border: 1px solid var(--border-secondary) !important;
   border-radius: 8px !important;
-  color: #ffffff !important;
+  color: var(--text-primary) !important;
   transition: all 0.3s ease !important;
   resize: none !important;
 }
 
 .form-textarea:hover {
-  border-color: #4facfe !important;
+  border-color: var(--accent-primary) !important;
 }
 
 .form-textarea:focus {
-  border-color: #4facfe !important;
+  border-color: var(--accent-primary) !important;
   box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.2) !important;
 }
 
 .form-textarea::placeholder {
-  color: #666666 !important;
+  color: var(--text-disabled) !important;
 }
 
 /* 片段选择区域 */
 .clips-selection {
-  border: 1px solid #2d2d2d;
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
-  background: #262626;
+  background: var(--bg-tertiary);
   overflow: hidden;
 }
 
@@ -167,12 +167,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  border-bottom: 1px solid #2d2d2d;
-  background: #1f1f1f;
+  border-bottom: 1px solid var(--border-primary);
+  background: var(--bg-secondary);
 }
 
 .selection-info {
-  color: #999999 !important;
+  color: var(--text-tertiary) !important;
   font-size: 12px;
 }
 
@@ -182,14 +182,14 @@
 }
 
 .action-btn {
-  color: #4facfe !important;
+  color: var(--accent-primary) !important;
   padding: 0 !important;
   height: auto !important;
   font-size: 12px !important;
 }
 
 .action-btn:hover {
-  color: #00a8ff !important;
+  color: var(--accent-hover) !important;
 }
 
 /* 片段网格 */
@@ -203,17 +203,17 @@
 }
 
 .clips-grid::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: var(--bg-secondary);
   border-radius: 3px;
 }
 
 .clips-grid::-webkit-scrollbar-thumb {
-  background: #404040;
+  background: var(--bg-hover);
   border-radius: 3px;
 }
 
 .clips-grid::-webkit-scrollbar-thumb:hover {
-  background: #555555;
+  background: var(--border-hover);
 }
 
 /* 片段项 */
@@ -222,10 +222,10 @@
   align-items: center;
   gap: 12px;
   padding: 16px;
-  border-bottom: 1px solid #2d2d2d;
+  border-bottom: 1px solid var(--border-primary);
   cursor: pointer;
   transition: all 0.2s ease;
-  background: #262626;
+  background: var(--bg-tertiary);
 }
 
 .clip-item:last-child {
@@ -233,7 +233,7 @@
 }
 
 .clip-item:hover {
-  background: #2d2d2d;
+  background: var(--bg-hover);
 }
 
 .clip-item.selected {
@@ -246,13 +246,13 @@
 }
 
 .clip-checkbox .ant-checkbox-inner {
-  background: #404040 !important;
-  border-color: #666666 !important;
+  background: var(--bg-hover) !important;
+  border-color: var(--border-secondary) !important;
 }
 
 .clip-checkbox .ant-checkbox-checked .ant-checkbox-inner {
-  background: #4facfe !important;
-  border-color: #4facfe !important;
+  background: var(--accent-primary) !important;
+  border-color: var(--accent-primary) !important;
 }
 
 .clip-content {
@@ -261,7 +261,7 @@
 }
 
 .clip-title {
-  color: #ffffff;
+  color: var(--text-primary);
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 4px;
@@ -274,7 +274,7 @@
   display: flex;
   gap: 16px;
   font-size: 12px;
-  color: #999999;
+  color: var(--text-tertiary);
 }
 
 /* 底部操作 */
@@ -284,13 +284,13 @@
   gap: 12px;
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid #2d2d2d;
+  border-top: 1px solid var(--border-primary);
 }
 
 .cancel-btn {
   background: transparent !important;
-  border: 1px solid #404040 !important;
-  color: #ffffff !important;
+  border: 1px solid var(--border-secondary) !important;
+  color: var(--text-primary) !important;
   border-radius: 8px !important;
   padding: 8px 24px !important;
   height: auto !important;
@@ -298,13 +298,13 @@
 }
 
 .cancel-btn:hover {
-  border-color: #666666 !important;
-  background: #2d2d2d !important;
-  color: #ffffff !important;
+  border-color: var(--border-hover) !important;
+  background: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
 }
 
 .create-btn {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+  background: var(--accent-primary) !important;
   border: none !important;
   border-radius: 8px !important;
   padding: 8px 24px !important;
@@ -317,11 +317,12 @@
 .create-btn:hover {
   transform: translateY(-2px) !important;
   box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4) !important;
+  background: var(--accent-hover) !important;
 }
 
 .create-btn:disabled {
-  background: #404040 !important;
-  color: #666666 !important;
+  background: var(--bg-hover) !important;
+  color: var(--text-disabled) !important;
   box-shadow: none !important;
   transform: none !important;
   cursor: not-allowed !important;
