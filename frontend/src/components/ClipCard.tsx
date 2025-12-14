@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Card, Button, Tooltip, Modal, message } from 'antd'
-import { PlayCircleOutlined, DownloadOutlined, ClockCircleOutlined, StarFilled, EditOutlined, UploadOutlined } from '@ant-design/icons'
+import { PlayCircleOutlined, DownloadOutlined, ClockCircleOutlined, StarFilled, EditOutlined } from '@ant-design/icons'
 import ReactPlayer from 'react-player'
 import { Clip } from '../store/useProjectStore'
-import SubtitleEditor from './SubtitleEditor'
-import { subtitleEditorApi } from '../services/subtitleEditorApi'
-import { SubtitleSegment, VideoEditOperation } from '../types/subtitle'
-import BilibiliManager from './BilibiliManager'
+
+
 import EditableTitle from './EditableTitle'
 import './ClipCard.css'
 
@@ -27,9 +25,7 @@ const ClipCard: React.FC<ClipCardProps> = ({
 }) => {
   const [showPlayer, setShowPlayer] = useState(false)
   const [videoThumbnail, setVideoThumbnail] = useState<string | null>(null)
-  const [showSubtitleEditor, setShowSubtitleEditor] = useState(false)
-  const [subtitleData, setSubtitleData] = useState<SubtitleSegment[]>([])
-  const [showBilibiliManager, setShowBilibiliManager] = useState(false)
+
   const playerRef = useRef<ReactPlayer>(null)
 
   // 生成视频缩略图
@@ -76,44 +72,7 @@ const ClipCard: React.FC<ClipCardProps> = ({
     setShowPlayer(false)
   }
 
-  const handleOpenSubtitleEditor = async () => {
-    // 显示开发中提示
-    message.info('开发中，敬请期待')
-  }
 
-  const handleSubtitleEditorClose = () => {
-    setShowSubtitleEditor(false)
-    setSubtitleData([])
-  }
-
-  const handleSubtitleEditorSave = async (operations: VideoEditOperation[]) => {
-    if (!projectId) return
-    
-    try {
-      // 提取要删除的字幕段ID
-      const deletedSegments = operations
-        .filter(op => op.type === 'delete')
-        .flatMap(op => op.segmentIds)
-
-      if (deletedSegments.length === 0) {
-        console.log('没有删除操作')
-        return
-      }
-
-      // 执行视频编辑
-      const result = await subtitleEditorApi.editClipBySubtitles(
-        projectId,
-        clip.id,
-        deletedSegments
-      )
-
-      if (result.success) {
-        console.log('视频编辑成功:', result)
-      }
-    } catch (error) {
-      console.error('视频编辑失败:', error)
-    }
-  }
 
   const handleTitleUpdate = (newTitle: string) => {
     // 更新本地状态
@@ -213,8 +172,6 @@ const ClipCard: React.FC<ClipCardProps> = ({
           style={{ 
             height: '380px',
             borderRadius: '16px',
-            border: '1px solid #303030',
-            background: 'linear-gradient(135deg, #1f1f1f 0%, #2a2a2a 100%)',
             overflow: 'hidden',
             cursor: 'pointer'
           }}
@@ -351,7 +308,7 @@ const ClipCard: React.FC<ClipCardProps> = ({
                     fontSize: '16px',
                     fontWeight: 600,
                     lineHeight: '1.4',
-                    color: '#ffffff',
+                    color: 'var(--text-primary)',
                     width: '100%'
                   }}
                 />
@@ -379,7 +336,7 @@ const ClipCard: React.FC<ClipCardProps> = ({
                       WebkitBoxOrient: 'vertical',
                       overflow: 'hidden',
                       lineHeight: '1.5',
-                      color: '#b0b0b0',
+                      color: 'var(--text-secondary)',
                       cursor: 'pointer',
                       wordBreak: 'break-word',
                       textOverflow: 'ellipsis',
@@ -406,13 +363,13 @@ const ClipCard: React.FC<ClipCardProps> = ({
                 icon={<PlayCircleOutlined />}
                 onClick={() => setShowPlayer(true)}
                 style={{
-                  color: '#4facfe',
-                  border: '1px solid rgba(79, 172, 254, 0.3)',
+                  color: 'var(--accent-primary)',
+                  border: '1px solid rgba(24, 144, 255, 0.3)',
                   borderRadius: '6px',
                   fontSize: '12px',
                   height: '28px',
                   padding: '0 12px',
-                  background: 'rgba(79, 172, 254, 0.1)'
+                  background: 'rgba(24, 144, 255, 0.1)'
                 }}
               >
                 播放
@@ -423,7 +380,7 @@ const ClipCard: React.FC<ClipCardProps> = ({
                 icon={<DownloadOutlined />}
                 onClick={handleDownloadWithTitle}
                 style={{
-                  color: '#52c41a',
+                  color: 'var(--success)',
                   border: '1px solid rgba(82, 196, 26, 0.3)',
                   borderRadius: '6px',
                   fontSize: '12px',
@@ -434,23 +391,7 @@ const ClipCard: React.FC<ClipCardProps> = ({
               >
                 下载
               </Button>
-              <Button 
-                type="text" 
-                size="small"
-                icon={<UploadOutlined />}
-                onClick={() => message.info('开发中，敬请期待', 3)}
-                style={{
-                  color: '#ff7875',
-                  border: '1px solid rgba(255, 120, 117, 0.3)',
-                  borderRadius: '6px',
-                  fontSize: '12px',
-                  height: '28px',
-                  padding: '0 12px',
-                  background: 'rgba(255, 120, 117, 0.1)'
-                }}
-              >
-                投稿
-              </Button>
+
             </div>
           </div>
         </Card>
@@ -463,33 +404,20 @@ const ClipCard: React.FC<ClipCardProps> = ({
           <Button key="download" type="primary" icon={<DownloadOutlined />} onClick={handleDownloadWithTitle}>
             下载视频
           </Button>,
-          <Button 
-            key="subtitle" 
-            icon={<EditOutlined />} 
-            onClick={handleOpenSubtitleEditor}
-          >
-            字幕编辑
-          </Button>,
-          <Button 
-            key="upload" 
-            type="default" 
-            icon={<UploadOutlined />} 
-            onClick={() => message.info('开发中，敬请期待', 3)}
-          >
-            投稿到B站
-          </Button>
+
+
         ]}
         width={800}
         centered
         destroyOnClose
         styles={{
           header: {
-            borderBottom: '1px solid #303030',
-            background: '#1f1f1f'
+            borderBottom: '1px solid var(--border-primary)',
+            background: 'var(--bg-secondary)'
           }
         }}
         closeIcon={
-          <span style={{ color: '#ffffff', fontSize: '16px' }}>×</span>
+          <span style={{ color: 'var(--text-primary)', fontSize: '16px' }}>×</span>
         }
         title={
           <div style={{ 
@@ -510,7 +438,7 @@ const ClipCard: React.FC<ClipCardProps> = ({
                 }
               }}
               style={{ 
-                color: '#ffffff', 
+                color: 'var(--text-primary)', 
                 fontSize: '16px', 
                 fontWeight: '500',
                 flex: 1,
@@ -548,31 +476,9 @@ const ClipCard: React.FC<ClipCardProps> = ({
         )}
       </Modal>
 
-      {/* 字幕编辑器 */}
-      {showSubtitleEditor && (
-        <>
-          {console.log('Rendering SubtitleEditor with:', { showSubtitleEditor, subtitleDataLength: subtitleData.length })}
-          <SubtitleEditor
-            videoUrl={videoUrl || ''}
-            subtitles={subtitleData}
-            onSave={handleSubtitleEditorSave}
-            onClose={handleSubtitleEditorClose}
-          />
-        </>
-      )}
 
-      {/* B站管理弹窗 */}
-      <BilibiliManager
-        visible={showBilibiliManager}
-        onClose={() => setShowBilibiliManager(false)}
-        projectId={projectId || ''}
-        clipIds={[clip.id]}
-        clipTitles={[clip.title || clip.generated_title || '视频片段']}
-        onUploadSuccess={() => {
-          // 投稿成功后可以刷新数据或显示提示
-          console.log('投稿成功')
-        }}
-      />
+
+
     </>
   )
 }

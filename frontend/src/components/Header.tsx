@@ -2,6 +2,7 @@ import React from 'react'
 import { Layout, Button } from 'antd'
 import { SettingOutlined, HomeOutlined } from '@ant-design/icons'
 import { useNavigate, useLocation } from 'react-router-dom'
+import ThemeToggle from './ThemeToggle'
 
 const { Header: AntHeader } = Layout
 
@@ -57,7 +58,7 @@ const Header: React.FC = () => {
             filter: 'drop-shadow(0 2px 4px rgba(79, 172, 254, 0.2))'
           }}
         >
-          AutoClip
+          AutoCut
         </span>
       </div>
       
@@ -82,6 +83,8 @@ const Header: React.FC = () => {
           </Button>
         )}
         
+        {/* 主题切换按钮 */}
+        <ThemeToggle />
         
         <Button 
           type="text" 

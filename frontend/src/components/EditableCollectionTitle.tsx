@@ -147,7 +147,7 @@ const EditableCollectionTitle: React.FC<EditableCollectionTitleProps> = ({
             textAlign: 'right', 
             marginTop: '8px', 
             fontSize: '12px', 
-            color: '#999' 
+            color: 'var(--text-tertiary)' 
           }}>
             {editValue.length}/{maxLength}
           </div>
@@ -193,24 +193,33 @@ const EditableCollectionTitle: React.FC<EditableCollectionTitleProps> = ({
     <div
       style={{
         cursor: 'pointer',
-        padding: '4px 0',
+        padding: '4px 8px',
+        borderRadius: '4px',
+        transition: 'all 0.2s ease',
         ...style
       }}
-      className={className}
+      className={`editable-title ${className || ''}`}
       onClick={handleStartEdit}
       title="点击编辑合集标题"
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = 'transparent'
+      }}
     >
       <span style={{ 
         wordBreak: 'break-word',
         lineHeight: '1.5',
         fontSize: '14px',
         minHeight: '20px',
-        display: 'inline'
+        display: 'inline',
+        color: 'var(--text-primary)'
       }}>
         {title}
         <EditOutlined 
           style={{ 
-            color: '#1890ff', 
+            color: 'var(--accent-primary)', 
             fontSize: '12px',
             opacity: 0.7,
             transition: 'opacity 0.2s',

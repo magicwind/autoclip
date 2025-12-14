@@ -149,7 +149,7 @@ const EditableTitle: React.FC<EditableTitleProps> = ({
           />
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ fontSize: '12px', color: '#666' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
             字符数: {editValue.length}/{maxLength}
           </div>
           <Space>
@@ -188,24 +188,33 @@ const EditableTitle: React.FC<EditableTitleProps> = ({
     <div
       style={{
         cursor: 'pointer',
-        padding: '4px 0',
+        padding: '4px 8px',
+        borderRadius: '4px',
+        transition: 'all 0.2s ease',
         ...style
       }}
-      className={className}
+      className={`editable-title ${className || ''}`}
       onClick={handleStartEdit}
       title="点击编辑标题"
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = 'transparent'
+      }}
     >
       <span style={{ 
         wordBreak: 'break-word',
         lineHeight: '1.5',
         fontSize: '14px',
         minHeight: '20px',
-        display: 'inline'
+        display: 'inline',
+        color: 'var(--text-primary)'
       }}>
         {title}
         <EditOutlined 
           style={{ 
-            color: '#1890ff', 
+            color: 'var(--accent-primary)', 
             fontSize: '12px',
             opacity: 0.7,
             transition: 'opacity 0.2s',

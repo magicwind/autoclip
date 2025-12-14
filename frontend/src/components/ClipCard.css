@@ -5,11 +5,17 @@
 
 .clip-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(24, 144, 255, 0.1);
+  box-shadow: 0 12px 32px var(--shadow-medium), 0 4px 16px rgba(24, 144, 255, 0.1);
 }
 
-.clip-card:hover .ant-card-body {
-  background: linear-gradient(135deg, #1f1f1f 0%, #333333 100%);
+/* 深色主题悬停效果 */
+[data-theme="dark"] .clip-card:hover .ant-card-body {
+  background: linear-gradient(135deg, #1f1f1f 0%, #333333 100%) !important;
+}
+
+/* 浅色主题悬停效果 */
+[data-theme="light"] .clip-card:hover .ant-card-body {
+  background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%) !important;
 }
 
 .video-overlay {
@@ -17,9 +23,16 @@
   backdrop-filter: blur(2px);
 }
 
-.clip-card:hover .video-overlay {
+/* 深色主题视频覆盖层 */
+[data-theme="dark"] .clip-card:hover .video-overlay {
   opacity: 1 !important;
   background: rgba(0,0,0,0.6) !important;
+}
+
+/* 浅色主题视频覆盖层 */
+[data-theme="light"] .clip-card:hover .video-overlay {
+  opacity: 1 !important;
+  background: rgba(255,255,255,0.8) !important;
 }
 
 .video-thumbnail {
@@ -35,7 +48,7 @@
 
 /* 自定义按钮悬停效果 */
 .clip-card .ant-btn-primary:hover {
-  background: linear-gradient(45deg, #40a9ff, #52c41a) !important;
+  background: linear-gradient(45deg, var(--accent-hover), var(--success)) !important;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
 }

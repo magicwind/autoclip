@@ -183,8 +183,7 @@ const HomePage: React.FC = () => {
 
   return (
     <Layout style={{ 
-      minHeight: '100vh', 
-      background: '#0f0f0f'
+      minHeight: '100vh'
     }}>
       <Content style={{ padding: '40px 24px', position: 'relative' }}>
         <div style={{ maxWidth: '1600px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
@@ -198,51 +197,28 @@ const HomePage: React.FC = () => {
             <div style={{
               width: '100%',
               maxWidth: '800px',
-              background: 'rgba(26, 26, 46, 0.8)',
-              backdropFilter: 'blur(20px)',
+              background: 'var(--bg-secondary)',
               borderRadius: '16px',
-              border: '1px solid rgba(79, 172, 254, 0.2)',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
               padding: '20px',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+              boxShadow: '0 8px 32px var(--shadow-light)'
             }}>
               {/* 标签页切换 */}
               <div style={{
                 display: 'flex',
                 marginBottom: '16px',
                 borderRadius: '8px',
-                background: 'rgba(0, 0, 0, 0.3)',
+                background: 'var(--bg-tertiary)',
                 padding: '3px'
               }}>
                  <button 
-                   style={{
-                     flex: 1,
-                     padding: '12px 24px',
-                     borderRadius: '8px',
-                     background: activeTab === 'bilibili' ? 'rgba(79, 172, 254, 0.2)' : 'transparent',
-                     color: activeTab === 'bilibili' ? '#4facfe' : '#cccccc',
-                     cursor: 'pointer',
-                     fontSize: '16px',
-                     fontWeight: 600,
-                     transition: 'all 0.3s ease',
-                     border: activeTab === 'bilibili' ? '1px solid rgba(79, 172, 254, 0.4)' : '1px solid transparent'
-                   }}
+                   className={`homepage-tab-button ${activeTab === 'bilibili' ? 'active' : ''}`}
                    onClick={() => setActiveTab('bilibili')}
                  >
                    📺 链接导入
                  </button>
                 <button 
-                   style={{
-                     flex: 1,
-                     padding: '12px 24px',
-                     borderRadius: '8px',
-                     background: activeTab === 'upload' ? 'rgba(79, 172, 254, 0.2)' : 'transparent',
-                     color: activeTab === 'upload' ? '#4facfe' : '#cccccc',
-                     cursor: 'pointer',
-                     fontSize: '16px',
-                     fontWeight: 600,
-                     transition: 'all 0.3s ease',
-                     border: activeTab === 'upload' ? '1px solid rgba(79, 172, 254, 0.4)' : '1px solid transparent'
-                   }}
+                   className={`homepage-tab-button ${activeTab === 'upload' ? 'active' : ''}`}
                    onClick={() => setActiveTab('upload')}
                  >
                    📁 文件导入
@@ -271,13 +247,12 @@ const HomePage: React.FC = () => {
 
           {/* 项目管理区域 */}
           <div style={{
-            background: 'rgba(26, 26, 46, 0.7)',
-            backdropFilter: 'blur(20px)',
+            background: 'var(--bg-secondary)',
             borderRadius: '24px',
-            border: '1px solid rgba(79, 172, 254, 0.15)',
+            border: '1px solid rgba(24, 144, 255, 0.15)',
             padding: '32px',
             marginBottom: '32px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.03)'
+            boxShadow: '0 8px 32px var(--shadow-light)'
           }}>
             {/* 项目列表标题区域 */}
             <div style={{ 
@@ -286,32 +261,28 @@ const HomePage: React.FC = () => {
               alignItems: 'center',
               marginBottom: '24px',
               paddingBottom: '16px',
-              borderBottom: '1px solid rgba(79, 172, 254, 0.1)'
+              borderBottom: '1px solid var(--border-primary)'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 <Title 
                   level={2} 
                   style={{ 
                     margin: 0,
-                    color: '#ffffff',
+                    color: 'var(--text-primary)',
                     fontSize: '24px',
-                    fontWeight: 600,
-                    background: 'linear-gradient(135deg, #ffffff 0%, #cccccc 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text'
+                    fontWeight: 600
                   }}
                 >
                   我的项目
                 </Title>
                 <div style={{
                   padding: '8px 16px',
-                  background: 'rgba(79, 172, 254, 0.1)',
+                  background: 'rgba(24, 144, 255, 0.1)',
                   borderRadius: '20px',
-                  border: '1px solid rgba(79, 172, 254, 0.3)',
+                  border: '1px solid rgba(24, 144, 255, 0.3)',
                   backdropFilter: 'blur(10px)'
                 }}>
-                  <Text style={{ color: '#4facfe', fontWeight: 600, fontSize: '14px' }}>
+                  <Text style={{ color: 'var(--accent-primary)', fontWeight: 600, fontSize: '14px' }}>
                     共 {filteredProjects.length} 个项目
                   </Text>
                 </div>
@@ -329,26 +300,12 @@ const HomePage: React.FC = () => {
                   style={{ 
                     minWidth: '140px',
                     height: '36px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(79, 172, 254, 0.2)',
-                    borderRadius: '8px',
-                    color: '#ffffff',
                     fontSize: '14px'
                   }}
-                  styles={{
-                    popup: {
-                      root: {
-                        background: 'rgba(26, 26, 46, 0.95)',
-                        border: '1px solid rgba(79, 172, 254, 0.3)',
-                        borderRadius: '8px',
-                        backdropFilter: 'blur(20px)',
-                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
-                      }
-                    }
-                  }}
+
                   suffixIcon={
                     <span style={{ 
-                      color: '#8c8c8c', 
+                      color: 'var(--text-tertiary)', 
                       fontSize: '10px',
                       transition: 'all 0.2s ease'
                     }}>
@@ -357,10 +314,10 @@ const HomePage: React.FC = () => {
                   }
                   allowClear
                 >
-                  <Option value="all" style={{ color: '#ffffff' }}>全部状态</Option>
-                  <Option value="completed" style={{ color: '#52c41a' }}>已完成</Option>
-                  <Option value="processing" style={{ color: '#1890ff' }}>处理中</Option>
-                  <Option value="error" style={{ color: '#ff4d4f' }}>处理失败</Option>
+                  <Option value="all">全部状态</Option>
+                  <Option value="completed">已完成</Option>
+                  <Option value="processing">处理中</Option>
+                  <Option value="error">处理失败</Option>
                 </Select>
               </div>
             </div>
@@ -371,14 +328,14 @@ const HomePage: React.FC = () => {
                  <div style={{ 
                    textAlign: 'center', 
                    padding: '60px 0',
-                   background: '#262626',
+                   background: 'var(--bg-tertiary)',
                    borderRadius: '12px',
-                   border: '1px solid #404040'
+                   border: '1px solid var(--border-secondary)'
                  }}>
                    <Spin size="large" />
                    <div style={{ 
                      marginTop: '20px', 
-                     color: '#cccccc',
+                     color: 'var(--text-secondary)',
                      fontSize: '16px'
                    }}>
                      正在加载项目列表...
@@ -388,9 +345,9 @@ const HomePage: React.FC = () => {
                  <div style={{
                    textAlign: 'center',
                    padding: '60px 0',
-                   background: '#262626',
+                   background: 'var(--bg-tertiary)',
                    borderRadius: '12px',
-                   border: '1px solid #404040'
+                   border: '1px solid var(--border-secondary)'
                  }}>
                    <Empty
                      image={Empty.PRESENTED_IMAGE_SIMPLE}
