@@ -15,7 +15,8 @@ import {
 import { 
   ArrowLeftOutlined, 
   PlayCircleOutlined,
-  PlusOutlined
+  PlusOutlined,
+  DownloadOutlined
 } from '@ant-design/icons'
 import { useProjectStore, Project, Clip } from '../store/useProjectStore'
 import { projectApi } from '../services/api'
@@ -248,6 +249,17 @@ const ProjectDetailPage: React.FC = () => {
     }
   }
 
+  const handleDownloadOriginal = async () => {
+    if (!id) return
+    try {
+      await projectApi.downloadOriginalVideo(id)
+      message.success('原视频下载已开始')
+    } catch (error) {
+      console.error('Failed to download original video:', error)
+      message.error('下载原视频失败')
+    }
+  }
+
   const getSortedClips = () => {
     if (!currentProject?.clips) return []
     const clips = [...currentProject.clips]
@@ -325,6 +337,19 @@ const ProjectDetailPage: React.FC = () => {
               开始处理
             </Button>
           )}
+          <Button 
+            icon={<DownloadOutlined />}
+            onClick={handleDownloadOriginal}
+            style={{
+              borderRadius: '8px',
+              border: '1px solid #d9d9d9',
+              fontWeight: 500,
+              height: '40px',
+              padding: '0 16px'
+            }}
+          >
+            下载原视频
+          </Button>
         </Space>
       </div>
 

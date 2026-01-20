@@ -155,10 +155,34 @@ export const projectApi = {
   },
 
   // 获取所有项目
-  getProjects: async (): Promise<Project[]> => {
-    const response = await api.get('/projects/')
-    // 处理分页响应结构，返回items数组
-    return (response as any).items || response || []
+  getProjects: async (page: number = 1, size: number = 20, status?: string, search?: string): Promise<{
+    items: Project[]
+    total: number
+    page: number
+    size: number
+    pages: number
+  }> => {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      size: size.toString()
+    })
+    
+    if (status && status !== 'all') {
+      params.append('status', status)
+    }
+    
+    if (search) {
+      params.append('search', search)
+    }
+    
+    const response = await api.get(`/projects/?${params.toString()}`)
+    return response as {
+      items: Project[]
+      total: number
+      page: number
+      size: number
+      pages: number
+    }
   },
 
   // 获取单个项目
@@ -425,6 +449,57 @@ export const projectApi = {
       return response.data
     } catch (error) {
       console.error('下载失败:', error)
+      throw error
+    }
+  },
+
+  // 下载原始视频
+  downloadOriginalVideo: async (projectId: string) => {
+    const url = `/projects/${projectId}/download?original=true`
+    
+    try {
+      // 对于blob类型的响应，需要直接使用axios而不是经过拦截器
+      const response = await axios.get(`http://localhost:8000/api/v1${url}`, { 
+        responseType: 'blob',
+        headers: {
+          'Accept': 'application/octet-stream'
+        }
+      })
+      
+      // 从响应头获取文件名，如果没有则使用默认名称
+      const contentDisposition = response.headers['content-disposition']
+      let filename = `project_${projectId}_original.mp4`
+      
+      if (contentDisposition) {
+        // 优先尝试解析 RFC 6266 格式的 filename* 参数
+        const filenameStarMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/)
+        if (filenameStarMatch) {
+          filename = decodeURIComponent(filenameStarMatch[1])
+        } else {
+          // 回退到传统的 filename 参数
+          const filenameMatch = contentDisposition.match(/filename="([^"]+)"/)
+          if (filenameMatch) {
+            filename = filenameMatch[1]
+          }
+        }
+      }
+      
+      // 创建下载链接
+      const blob = new Blob([response.data], { type: 'video/mp4' })
+      const downloadUrl = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = downloadUrl
+      link.download = filename
+      
+      // 触发下载
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(downloadUrl)
+      
+      return response.data
+    } catch (error) {
+      console.error('下载原始视频失败:', error)
       throw error
     }
   },

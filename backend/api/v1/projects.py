@@ -1213,10 +1213,11 @@ async def download_project_file(
     project_id: str,
     clip_id: Optional[str] = Query(None, description="下载指定切片"),
     collection_id: Optional[str] = Query(None, description="下载指定合集"),
+    original: Optional[bool] = Query(False, description="下载原始视频"),
     db: Session = Depends(get_db),
     project_service: ProjectService = Depends(get_project_service)
 ):
-    """下载项目文件（切片或合集）"""
+    """下载项目文件（切片、合集或原始视频）"""
     try:
         from fastapi.responses import FileResponse
         from pathlib import Path
@@ -1292,8 +1293,36 @@ async def download_project_file(
                 }
             )
         
+        elif original:
+            # 下载原始视频
+            from ...core.path_utils import get_project_raw_directory
+            raw_dir = get_project_raw_directory(project_id)
+            original_video_path = raw_dir / "input.mp4"
+            
+            if not original_video_path.exists():
+                raise HTTPException(status_code=404, detail="原始视频文件不存在")
+            
+            # 生成下载文件名 - 使用项目名称
+            project_name = project.name or f"project_{project_id}"
+            from ...utils.video_processor import VideoProcessor
+            safe_name = VideoProcessor.sanitize_filename(project_name)
+            filename = f"{safe_name}_original.mp4"
+            
+            # 对文件名进行URL编码
+            import urllib.parse
+            encoded_filename = urllib.parse.quote(filename.encode('utf-8'))
+            
+            return FileResponse(
+                path=str(original_video_path),
+                filename=filename,
+                media_type="video/mp4",
+                headers={
+                    "Content-Disposition": f"attachment; filename*=UTF-8''{encoded_filename}"
+                }
+            )
+        
         else:
-            raise HTTPException(status_code=400, detail="必须指定clip_id或collection_id")
+            raise HTTPException(status_code=400, detail="必须指定clip_id、collection_id或original=true")
         
     except HTTPException:
         raise

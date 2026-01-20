@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { 
   Layout, 
   Typography, 
   Select, 
   Spin, 
   Empty,
-  message 
+  message,
+  Pagination,
+  Input
 } from 'antd'
+import { SearchOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import ProjectCard from '../components/ProjectCard'
 import FileUpload from '../components/FileUpload'
@@ -26,6 +29,11 @@ const HomePage: React.FC = () => {
   const { projects, setProjects, deleteProject, loading, setLoading } = useProjectStore()
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [activeTab, setActiveTab] = useState<'upload' | 'bilibili'>('upload')
+  const [searchText, setSearchText] = useState<string>('')
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [pageSize, setPageSize] = useState<number>(20)
+  const [total, setTotal] = useState<number>(0)
+  const [totalPages, setTotalPages] = useState<number>(0)
 
   // WebSocket连接已禁用，使用新的简化进度系统
   // const handleWebSocketMessage = (message: WebSocketEventMessage) => {
@@ -56,8 +64,9 @@ const HomePage: React.FC = () => {
 
   // 使用项目轮询Hook
   const { refreshNow } = useProjectPolling({
-    onProjectsUpdate: (updatedProjects) => {
-      setProjects(updatedProjects || [])
+    onProjectsUpdate: async (updatedProjects) => {
+      // 当轮询检测到更新时，重新加载当前页面的项目
+      await loadProjects()
     },
     enabled: true,
     interval: 10000 // 10秒轮询一次
@@ -67,17 +76,25 @@ const HomePage: React.FC = () => {
     loadProjects()
   }, [])
 
-  const loadProjects = async () => {
+  const loadProjects = async (page: number = currentPage, size: number = pageSize, status: string = statusFilter, search: string = searchText) => {
     setLoading(true)
     try {
       // 从后端API获取真实项目数据
-      const projects = await projectApi.getProjects()
-      setProjects(projects || [])
+      const response = await projectApi.getProjects(page, size, status, search)
+      console.log('API Response:', response) // Debug log
+      setProjects(response.items || [])
+      setTotal(response.total || 0)
+      setCurrentPage(response.page || page)
+      setPageSize(response.size || size)
+      setTotalPages(response.pages || 0)
+      console.log('Pagination state:', { total: response.total, page: response.page, size: response.size }) // Debug log
     } catch (error) {
       message.error('加载项目失败')
       console.error('Load projects error:', error)
       // 如果API调用失败，设置空数组
       setProjects([])
+      setTotal(0)
+      setTotalPages(0)
     } finally {
       setLoading(false)
     }
@@ -102,10 +119,45 @@ const HomePage: React.FC = () => {
       await projectApi.deleteProject(id)
       deleteProject(id)
       message.success('项目删除成功')
+      // 重新加载当前页
+      await loadProjects()
     } catch (error) {
       message.error('删除项目失败')
       console.error('Delete project error:', error)
     }
+  }
+
+  const handlePageChange = (page: number, size?: number) => {
+    const newPageSize = size || pageSize
+    setCurrentPage(page)
+    if (size && size !== pageSize) {
+      setPageSize(newPageSize)
+    }
+    loadProjects(page, newPageSize, statusFilter, searchText)
+  }
+
+  const handleStatusFilterChange = (value: string) => {
+    setStatusFilter(value)
+    setCurrentPage(1) // 重置到第一页
+    loadProjects(1, pageSize, value, searchText)
+  }
+
+  const handleSearchChange = useCallback(
+    debounce((value: string) => {
+      setSearchText(value)
+      setCurrentPage(1) // 重置到第一页
+      loadProjects(1, pageSize, statusFilter, value)
+    }, 500),
+    [pageSize, statusFilter]
+  )
+
+  // 简单的防抖函数
+  function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
+    let timeout: NodeJS.Timeout
+    return ((...args: any[]) => {
+      clearTimeout(timeout)
+      timeout = setTimeout(() => func(...args), wait)
+    }) as T
   }
 
   const handleRetryProject = async (projectId: string) => {
@@ -135,7 +187,7 @@ const HomePage: React.FC = () => {
       // 立即刷新项目列表以显示最新状态
       setTimeout(async () => {
         try {
-          await refreshNow()
+          await loadProjects()
         } catch (refreshError) {
           console.error('Failed to refresh after starting processing:', refreshError)
         }
@@ -151,7 +203,7 @@ const HomePage: React.FC = () => {
         // 延迟刷新项目列表
         setTimeout(async () => {
           try {
-            await refreshNow()
+            await loadProjects()
           } catch (refreshError) {
             console.error('Failed to refresh after timeout:', refreshError)
           }
@@ -170,16 +222,6 @@ const HomePage: React.FC = () => {
     // 其他状态可以正常进入详情页
     navigate(`/project/${project.id}`)
   }
-
-  const filteredProjects = projects
-    .filter(project => {
-      const matchesStatus = statusFilter === 'all' || project.status === statusFilter
-      return matchesStatus
-    })
-    .sort((a, b) => {
-      // 按创建时间倒序排列，最新的在前面
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    })
 
   return (
     <Layout style={{ 
@@ -283,26 +325,37 @@ const HomePage: React.FC = () => {
                   backdropFilter: 'blur(10px)'
                 }}>
                   <Text style={{ color: 'var(--accent-primary)', fontWeight: 600, fontSize: '14px' }}>
-                    共 {filteredProjects.length} 个项目
+                    共 {total} 个项目
                   </Text>
                 </div>
               </div>
               
-              {/* 状态筛选移到右侧 */}
+              {/* 搜索和筛选区域 */}
               <div style={{ 
                 display: 'flex', 
-                alignItems: 'center'
+                alignItems: 'center',
+                gap: '12px'
               }}>
+                <Input.Search
+                  placeholder="搜索项目名称..."
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  onSearch={handleSearchChange}
+                  style={{ 
+                    width: '200px',
+                    height: '36px'
+                  }}
+                  prefix={<SearchOutlined style={{ color: 'var(--text-tertiary)' }} />}
+                  allowClear
+                />
                 <Select
                   placeholder="选择状态"
                   value={statusFilter}
-                  onChange={setStatusFilter}
+                  onChange={handleStatusFilterChange}
                   style={{ 
                     minWidth: '140px',
                     height: '36px',
                     fontSize: '14px'
                   }}
-
                   suffixIcon={
                     <span style={{ 
                       color: 'var(--text-tertiary)', 
@@ -341,7 +394,7 @@ const HomePage: React.FC = () => {
                      正在加载项目列表...
                    </div>
                  </div>
-               ) : filteredProjects.length === 0 ? (
+               ) : projects.length === 0 ? (
                  <div style={{
                    textAlign: 'center',
                    padding: '60px 0',
@@ -354,31 +407,79 @@ const HomePage: React.FC = () => {
                      description={
                        <div>
                          <Text type="secondary">
-                           {projects.length === 0 ? '还没有项目，请使用上方的导入区域创建第一个项目' : '没有找到匹配的项目'}
+                           {total === 0 ? '还没有项目，请使用上方的导入区域创建第一个项目' : '没有找到匹配的项目'}
                          </Text>
                        </div>
                      }
                    />
                  </div>
                ) : (
-                 <div style={{
-                   display: 'grid',
-                   gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-                   gap: '16px',
-                   justifyContent: 'start',
-                   padding: '6px 0'
-                 }}>
-                   {filteredProjects.map((project: Project) => (
-                     <div key={project.id} style={{ position: 'relative', zIndex: 1 }}>
-                       <ProjectCard 
-                         project={project} 
-                         onDelete={handleDeleteProject}
-                         onRetry={() => handleRetryProject(project.id)}
-                         onClick={() => handleProjectCardClick(project)}
+                 <>
+                   <div style={{
+                     display: 'grid',
+                     gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                     gap: '16px',
+                     justifyContent: 'start',
+                     padding: '6px 0',
+                     marginBottom: '24px'
+                   }}>
+                     {projects.map((project: Project) => (
+                       <div key={project.id} style={{ position: 'relative', zIndex: 1 }}>
+                         <ProjectCard 
+                           project={project} 
+                           onDelete={handleDeleteProject}
+                           onRetry={() => handleRetryProject(project.id)}
+                           onClick={() => handleProjectCardClick(project)}
+                         />
+                       </div>
+                     ))}
+                   </div>
+                   
+                   {/* Debug info - remove this later */}
+                   <div style={{ 
+                     padding: '10px', 
+                     background: '#f0f0f0', 
+                     margin: '10px 0',
+                     fontSize: '12px',
+                     borderRadius: '4px'
+                   }}>
+                     Debug: total={total}, currentPage={currentPage}, pageSize={pageSize}, projects.length={projects.length}
+                   </div>
+                   
+                   {/* 分页组件 */}
+                   {total > 0 && (
+                     <div style={{
+                       display: 'flex',
+                       justifyContent: 'center',
+                       alignItems: 'center',
+                       padding: '20px 0',
+                       borderTop: '1px solid var(--border-secondary)'
+                     }}>
+                       <Pagination
+                         current={currentPage}
+                         total={total}
+                         pageSize={pageSize}
+                         onChange={handlePageChange}
+                         onShowSizeChange={handlePageChange}
+                         showSizeChanger
+                         showQuickJumper
+                         showTotal={(total, range) => 
+                           `第 ${range[0]}-${range[1]} 项，共 ${total} 项`
+                         }
+                         pageSizeOptions={['10', '20', '50', '100']}
+                         style={{
+                           '& .ant-pagination-item': {
+                             borderRadius: '6px',
+                           },
+                           '& .ant-pagination-item-active': {
+                             background: 'var(--accent-primary)',
+                             borderColor: 'var(--accent-primary)',
+                           }
+                         }}
                        />
                      </div>
-                   ))}
-                 </div>
+                   )}
+                 </>
                )}
              </div>
            </div>
